@@ -28,11 +28,12 @@ public:
 
     UFUNCTION(BlueprintCallable)
     bool IsOffCooldown() const { return bIsOffCooldown; }
-
+	virtual void BeginPlay(AActor* Source) {}; // As the abilities have no representation in the engine world, it would be nice to know who they belong to. For use in events outside Activate.
     virtual void BeginDestroy();
-private:
+protected:
+	FTimerManager* TimerManager = nullptr; // Why? So the children functions can also use timed events
     bool bIsOffCooldown = true;
-    FTimerManager* TimerManager = nullptr;
+    
     FTimerHandle CooldownTimerHandle;
     void OnCooldownTimerExpired();
 };

@@ -26,7 +26,8 @@ public:
 	/** Returns CursorToWorld subobject **/
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 
-
+	float GetHealth() const;
+	void SetHealth(float);
 
 	UPROPERTY()
 	TArray<UAbility*> AbilityInstances;

@@ -14,6 +14,11 @@ ATopDownARPGPlayerController::ATopDownARPGPlayerController()
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 }
 
+void ATopDownARPGPlayerController::StopFollowingMouse()
+{
+	bMoveToMouseCursor = false;
+}
+
 void ATopDownARPGPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);

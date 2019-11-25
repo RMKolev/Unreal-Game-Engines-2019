@@ -71,6 +71,9 @@ void ATopDownARPGCharacter::BeginPlay()
 	{
 		AbilityInstances.Add(NewObject<UAbility>(this, Template));
 	}
+	for (auto ability : AbilityInstances) {
+		ability->BeginPlay(this);
+	}
 }
 
 void ATopDownARPGCharacter::Tick(float DeltaSeconds)
@@ -127,4 +130,10 @@ void ATopDownARPGCharacter::Death()
 	{
 		GameMode->EndGame(false);
 	}
+}
+float ATopDownARPGCharacter::GetHealth() const {
+	return this->Health;
+}
+void ATopDownARPGCharacter::SetHealth(float health) {
+	this->Health = health;
 }
