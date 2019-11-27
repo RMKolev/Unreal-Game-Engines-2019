@@ -7,7 +7,7 @@ FTimePointData::FTimePointData()
 {
 }
 
-FTimePointData::FTimePointData(const FVector & location, const float & health) : location(location), health(health)
+FTimePointData::FTimePointData(const FVector & location, const float & health) : Location(location), Health(health)
 {
 }
 
@@ -17,10 +17,10 @@ FTimePointData::~FTimePointData()
 
 FVector FTimePointData::GetLocation() const
 {
-	return location;
+	return Location;
 }
 
 float FTimePointData::GetHealth() const
 {
-	return health;
+	return Health;
 }

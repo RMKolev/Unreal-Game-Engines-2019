@@ -48,12 +48,12 @@ private:
 
 	const float TimePointInterval = 0.05f; //For stability's sake this should remain unchanged unless thoroughly tested
 	TCircularBuffer<FTimePointData> points = TCircularBuffer<FTimePointData>( (uint32)((SecondsToRewind*100)/(TimePointInterval*100)));
-	uint32 currentIndex = 0;
-	uint32 hopCount = SecondsToRewind/TimePointInterval;
-	uint32 currentHop = 0;
+	uint32 CurrentIndex = 0;
+	uint32 HopCount = SecondsToRewind/TimePointInterval;
+	uint32 CurrentHop = 0;
 	uint32 bEndAbility : 1;
 
-	FVector getNextInterpolationPoint();
+	FVector GetNextInterpolationPoint();
 	float alpha = 0.f;
 	void InterpolateCast();
 };

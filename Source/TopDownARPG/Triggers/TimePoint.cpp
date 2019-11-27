@@ -28,12 +28,13 @@ void ATimePoint::BeginPlay()
 void ATimePoint::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (!bActive) {
-		if (ttl > 0)
+	if (!bActive) 
+	{
+		if (Ttl > 0)
 		{
-			ttl -= DeltaTime;
+			Ttl -= DeltaTime;
 		}
-		else if (ttl < 0) {
+		else if (Ttl < 0) {
 			Destroy();
 		}
 	}
@@ -44,8 +45,9 @@ void ATimePoint::BeginDestroy() {
 void ATimePoint::Activate()
 {
 	bActive = true;
-	if (next.IsValid()) {
-		next->Activate();
+	if (Next.IsValid()) 
+	{
+		Next->Activate();
 	}
 }
 
@@ -56,12 +58,12 @@ void ATimePoint::SetHealth(float health)
 
 void ATimePoint::SetNext(TWeakObjectPtr<ATimePoint>& next)
 {
-	this->next = next;
+	this->Next = next;
 }
 
 TWeakObjectPtr<ATimePoint> ATimePoint::GetNext()
 {
-	return this->next;
+	return this->Next;
 }
 
 float ATimePoint::GetHealth() const

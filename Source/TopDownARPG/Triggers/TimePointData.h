@@ -17,6 +17,6 @@ public:
 	FVector GetLocation() const;
 	float GetHealth() const;
 private:
-	FVector location;
-	float health = 0.f;
+	FVector Location;
+	float Health = 0.f;
 };

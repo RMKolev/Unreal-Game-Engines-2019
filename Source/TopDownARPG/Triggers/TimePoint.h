@@ -28,8 +28,9 @@ private:
 	float HealthStat = 0.0f; // This should be changed to PlayerStat or some kind of Stats the timeCapsule should keep when more stats arise
 	UPROPERTY(VisibleAnywhere, Category = Gameplay)
 	class USphereComponent* SphereComponent;
-	float ttl = 2.0f;
+	UPROPERTY(EditAnywhere, Category = Gameplay)
+	float Ttl = 2.0f;
 	bool bActive = false;
-	TWeakObjectPtr<ATimePoint> next;
+	TWeakObjectPtr<ATimePoint> Next;
 
 };

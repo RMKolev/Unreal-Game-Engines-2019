@@ -18,17 +18,18 @@ void UTimeTear::BeginPlay(AActor* Source) {
 		return;
 	}
 	this->Owner = Cast<ATopDownARPGCharacter>(Source);
-	if (Owner == nullptr) {
+	if (Owner == nullptr) 
+	{
 		UE_LOG(LogTopDownARPG, Log, TEXT("Invalid Ability: Time Tear can only be used on Characters!"));
 			return;
 	}
 	TimerManager = &World->GetTimerManager();
-	hopCount = SecondsToRewind / TimePointInterval;
+	HopCount = SecondsToRewind / TimePointInterval;
 	points = TCircularBuffer<FTimePointData>((uint32)((SecondsToRewind * 100) / (TimePointInterval * 100)));
 	bIsOffCooldown = false;
 	TimerManager->SetTimer(CooldownTimerHandle, this, &UTimeTear::OnCooldownTimerExpired, SecondsToRewind, false, SecondsToRewind); // Setting the initial cooldown to generate enough points from gamestart
 	TimerManager->SetTimer(TimePointSpawnTimerHandle, this, &UTimeTear::OnSpawnTimePoint, TimePointInterval, true, 0.0f);
-	UE_LOG(LogTopDownARPG, Log, TEXT("HopCount is %d, Points capacity is %d, SecondsToRewind is %f, SecondsToRunAbility is %f"), hopCount, points.Capacity(),SecondsToRewind,SecondsToRunAbility);
+	UE_LOG(LogTopDownARPG, Log, TEXT("HopCount is %d, Points capacity is %d, SecondsToRewind is %f, SecondsToRunAbility is %f"), HopCount, points.Capacity(),SecondsToRewind,SecondsToRunAbility);
 	Super::BeginPlay(Source);
 }
 
@@ -39,10 +40,10 @@ void UTimeTear::OnSpawnTimePoint() {
 		UE_LOG(LogTopDownARPG, Error, TEXT("UAbility::Activate IsValid(World) == false"));
 		return;
 	}
-	auto location = Owner->GetActorLocation();
-	float health = Owner->GetHealth();
-	points[currentIndex] = FTimePointData(location, health);
-	currentIndex = points.GetNextIndex(currentIndex);
+	auto Location = Owner->GetActorLocation();
+	float Health = Owner->GetHealth();
+	points[CurrentIndex] = FTimePointData(Location, Health);
+	CurrentIndex = points.GetNextIndex(CurrentIndex);
 	//Use this code to generate a trace and see the points generated from the ability. Useful in debugging or for generating a cool trace. Could be used to add some effects later.
 	/*if (TimeCapsuleBP) 
 	{	
@@ -56,7 +57,8 @@ void UTimeTear::OnSpawnTimePoint() {
 }
 void UTimeTear::Activate(AActor * Source)
 {
-	if (this->bIsOffCooldown) {
+	if (this->bIsOffCooldown) 
+	{
 		TimerManager->ClearTimer(TimePointSpawnTimerHandle);
 		UWorld* World = GetWorld();
 		if (IsValid(World) == false)
@@ -68,7 +70,8 @@ void UTimeTear::Activate(AActor * Source)
 		UGameplayStatics::SetGlobalTimeDilation(World, TimeDilation);
 		TimerManager->SetTimer(ActorTimeDilationIncrease, this, &UTimeTear::SetActorTimeTearEffects, 0.2f, false, 0.0f);
 	}
-	else {
+	else 
+	{
 		UE_LOG(LogTopDownARPG, Error, TEXT("Time Tear Ability is on Cooldown!"));
 	}
 }
@@ -77,7 +80,7 @@ void UTimeTear::SetActorTimeTearEffects()
 {
 	bEndAbility = false;
 	UE_LOG(LogTopDownARPG, Error, TEXT("Actor was dilated!!!!"));
-	currentIndex = points.GetPreviousIndex(currentIndex);
+	CurrentIndex = points.GetPreviousIndex(CurrentIndex);
 	Owner->CustomTimeDilation = 0.f;
 	Owner->GetCharacterMovement()->bUseControllerDesiredRotation = false;
 	Owner->GetCharacterMovement()->bOrientRotationToMovement = false;
@@ -94,9 +97,9 @@ void UTimeTear::SetActorTimeTearEffects()
 void UTimeTear::ClearResidualEffects()
 {
 	UGameplayStatics::SetGlobalTimeDilation(GWorld, 1.f);
-	Owner->SetHealth(points[currentIndex].GetHealth());
-	currentHop = 0;
-	currentIndex = 0;
+	Owner->SetHealth(points[CurrentIndex].GetHealth());
+	CurrentHop = 0;
+	CurrentIndex = 0;
 	alpha = 0;
 	TimerManager->ClearTimer(ActiveSkillTimerHandle);
 	Owner->CustomTimeDilation = 1.f;
@@ -114,39 +117,46 @@ void UTimeTear::ClearResidualEffects()
 	TimerManager->SetTimer(CooldownTimerHandle, this, &UTimeTear::OnCooldownTimerExpired, CooldownTime*CooldownTimeDilation, false, CooldownTime*CooldownTimeDilation);
 }
 
-FVector UTimeTear::getNextInterpolationPoint()
+FVector UTimeTear::GetNextInterpolationPoint()
 {
 	alpha += SecondsToRewind / SecondsToRunAbility;
 	UE_LOG(LogTopDownARPG, Log, TEXT("Alpha %f"), alpha);
-	if (alpha >= 1) {
-		while (alpha >= 1) {
+	if (alpha >= 1) 
+	{
+		while (alpha >= 1) 
+		{
 			UE_LOG(LogTopDownARPG, Log, TEXT("Alpha %f"), alpha);
 			UE_LOG(LogTopDownARPG, Log, TEXT("Alpha %f"), alpha);
 			alpha--;
-			currentHop++;
-			if (currentHop >= hopCount) {
-				UE_LOG(LogTopDownARPG, Log, TEXT("Current hop exceeded %d > %d"), currentHop, hopCount);
+			CurrentHop++;
+			if (CurrentHop >= HopCount) 
+			{
+				UE_LOG(LogTopDownARPG, Log, TEXT("Current hop exceeded %d > %d"), CurrentHop, HopCount);
 				bEndAbility = true;
 				return Owner->GetActorLocation();
 			}
-			else {
-				currentIndex = points.GetPreviousIndex(currentIndex);
+			else 
+			{
+				CurrentIndex = points.GetPreviousIndex(CurrentIndex);
 			}
 		}
 	}
-	return (1 - alpha)*points[currentIndex].GetLocation() + alpha * points[points.GetPreviousIndex(currentIndex)].GetLocation();
+	return (1 - alpha)*points[CurrentIndex].GetLocation() + alpha * points[points.GetPreviousIndex(CurrentIndex)].GetLocation();
 }
 
-void UTimeTear::InterpolateCast() {
-	FVector nextInterpolationPoint = getNextInterpolationPoint();
+void UTimeTear::InterpolateCast() 
+{
+	FVector nextInterpolationPoint = GetNextInterpolationPoint();
 	CurrDirection = Owner->GetActorLocation() - nextInterpolationPoint;
 	UE_LOG(LogTopDownARPG,Log,TEXT("Actor rotation is %s"), *CurrDirection.Rotation().ToString())
-		if (!bEndAbility) {
+		if (!bEndAbility) 
+		{
 			Owner->SetActorRotation(CurrDirection.Rotation().Quaternion());
 		}
 	Owner->SetActorLocation(nextInterpolationPoint);
-	if (bEndAbility) {
-		UE_LOG(LogTopDownARPG, Log, TEXT("ABILITY Finished at index %s"), *points[currentIndex].GetLocation().ToString());
+	if (bEndAbility) 
+	{
+		UE_LOG(LogTopDownARPG, Log, TEXT("ABILITY Finished at index %s"), *points[CurrentIndex].GetLocation().ToString());
 		CurrDirection = FVector::ZeroVector; // Set the movement vector to zero so as not to get a random direction when the ability finishes!
 		ClearResidualEffects();
 	}
